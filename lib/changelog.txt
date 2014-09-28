@@ -1,0 +1,3 @@
+2010-05-06
+	add taglib first
+	the same tag can contain content and not contain content.

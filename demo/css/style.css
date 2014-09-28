@@ -1,0 +1,7 @@
+@charset "utf-8";
+/* CSS Document */
+#left{float:left;
+/*height:1500px;*/
+border-right:#000 solid 1px;
+width:20%}
+.right{float:left;width:78%}
