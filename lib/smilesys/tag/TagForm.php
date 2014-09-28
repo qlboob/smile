@@ -170,11 +170,11 @@ class TagForm extends BaseTag {
 		$ret .= '<?php '.$container.'=array();foreach('.$options.' as $key=>$val) { ?>';
         if ($selected) {
         	$ret .= '<?php if(isset($'.$selected.')&&($'.$selected.'==$key||(is_array($'.$selected.')&&in_array($key,$'.$selected.')))){ ?>';
-        	$ret .= "<?php {$container}[]='<input{$inputAttr} checked=\"checked\" value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val);?>";
-        	$ret .= '<?php }else{?>'."<?php {$container}[]='<input {$inputAttr} value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val);?>";
+        	$ret .= "<?php {$container}[]='<label><input{$inputAttr} checked=\"checked\" value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val).'</label>';?>";
+        	$ret .= '<?php }else{?>'."<?php {$container}[]='<label><input {$inputAttr} value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val).'</label>';?>";
         	$ret .= '<?php }?>';
         }else {
-        	$ret .= "<?php {$container}[]='<input {$inputAttr} value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val);?>";
+        	$ret .= "<?php {$container}[]='<label><input {$inputAttr} value=\"'.{$keyFun}(\$key).'\" />'.{$valueFun}(\$val).'</label>';?>";
         }
         $ret   .= '<?php }?>';
         if (empty($callback)) {
