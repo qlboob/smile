@@ -125,7 +125,7 @@ class TagForm extends BaseTag {
 		is_string($tag) && $tag = array('name'=>$tag);
 		$tag['type']	=	'checkbox';
 		$tag	=	$this->decorateAttr($tag,'id,value');
-		$condition	=	"<?php if(\${$tag['name']})echo ' checked=\"checked\"';?>";
+		$condition	=	"<?php if(isset(\${$tag['name']}) and \${$tag['name']})echo ' checked=\"checked\"';?>";
 		$attrStr	=	$this->buildAttr($tag);
 		if (!isset($tag['nohidden'])) {
 //			$addArr	=	$this->_hidden(array('name'=>$tag['name'],'value'=>isset($tag['hiddenvalue'])?$tag['hiddenvalue']:0,'id'=>''));
@@ -201,12 +201,12 @@ class TagForm extends BaseTag {
 		$textAreaAttr	=	$this->buildAttr($tag);
 		if ($html) {
 			if($value[0]=='$')
-				$parsedValue	=	"<?php echo $value;?>";
+				$parsedValue	=	"<?php if(isset($value)) echo $value;?>";
 			else 
 				$parsedValue	=	$value;
 		}else {
 			if($value[0]=='$')
-				$parsedValue	=	"<?php echo htmlspecialchars({$value});?>";
+				$parsedValue	=	"<?php if(isset($value)) echo htmlspecialchars({$value});?>";
 			else 
 				$parsedValue	=	htmlspecialchars($value);
 		}

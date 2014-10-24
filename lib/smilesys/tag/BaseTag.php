@@ -19,9 +19,9 @@ abstract class BaseTag {
 	
 	static function getAttrArray($attr) {
 		//double quote eg. name="name"
-		$patternDouble	=	'/(\w+?)\s*?=\s*?"(.*?)"/is';
-		$patternSingle	=	'/(\w+?)\s*?=\s*?\'(.*?)\'/is';
-		$patternNo		=	'/(\w+?)\s*?=\s*?(\S+)/is';
+		$patternDouble	=	'/([\w-]+?)\s*?=\s*?"(.*?)"/is';
+		$patternSingle	=	'/([\w-]+?)\s*?=\s*?\'(.*?)\'/is';
+		$patternNo		=	'/([\w-]+?)\s*?=\s*?(\S+)/is';
 		(strpos($attr,'"') && preg_match_all($patternDouble,$attr,$matches,PREG_SET_ORDER) ) ||
 		(strpos($attr,"'") && preg_match_all($patternSingle,$attr,$matches,PREG_SET_ORDER))||
 		(strpos($attr,'=') && preg_match_all($patternNo,$attr,$matches,PREG_SET_ORDER)) ;
