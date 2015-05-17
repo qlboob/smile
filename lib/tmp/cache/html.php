@@ -1,75 +1,120 @@
+<?php 
+	use Com\Qinjq\Block\SLayout;
+	foreach(array('head','closure') as $v){
+		$regionVar = '_region'.ucfirst($v);
+		$$regionVar = SLayout::getContent($v);
+	}
+?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta charset="utf-8" />
-		<title>管理系统--</title>
-		<link rel="stylesheet" href="http://st.midea.com/pc/css/admin/global.css" type="text/css" media="screen" />
+		<meta charset="UTF-8" />
+		<title><?php echo $htmlHeadTitle;?></title>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+		<![endif]-->
+		<?php echo $_regionHead;?>
 		
 	</head>
-	<body class="">
-		<!--头部-->
-		<div class="header">
-			<div class="container">
-				<h1 class="title">
-					<a>管理系统<img src="http://static.midea.com/pc/img/admin/logo.png" /></a>
-				</h1><div class="top_menu" name="username">
-					<ul>
+	<body class="skin-blue">
+		<header class="header">
+			<a class="logo" href="<?php echo U(MODULE_NAME.'/Index/index');?>">Smile Cms</a>
+			<nav class="navbar navbar-static-top" role="navigation">
+				<a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+			</nav>
+		</header>
+		<div class="wrapper row-offcanvas row-offcanvas-left">
+			<aside class="left-side sidebar-offcanvas">
+				<section class="sidebar">
+					<div class="user-panel">
+						<div class="pull-left image">
+							<img src="<?php echo __ROOT__;?>/skin/adminlte/img/me.png" class="img-circle" alt="User Image" />
+						</div>
+						<div class="pull-left info">
+							<p>Hello, Luke</p>
+							<a href="#">
+								<i class="fa fa-circle text-success"></i>
+								Online
+							</a>
+						</div>
+					</div>
+					<ul class="sidebar-menu">
 						<li>
-							<p>欢迎您</p>
+							<a href="<?php echo U('Dev/Index/index');?>">
+								<i class="fa fa-dashboard"></i>
+								<span>首页</span>
+							</a>
 						</li>
-						<li>
-							<a>退出</a>
+						<li class="treeview active">
+							<a href="#">
+								<i class="fa fa-bar-chart-o"></i>
+								<span>核心</span>
+								<i class="fa fa-angle-left pull-right"></i>
+							</a>
+							<ul class="treeview-menu">
+								<li>
+									<a href="<?php echo U('Dev/Site/index');?>">
+										<i class="fa fa-angle-double-right"></i>
+										站点
+									</a>
+								</li>
+								<li>
+									<a href="<?php echo U('Dev/Model/index',array('sit_id'=>$_COOKIE['_sit_id']));?>">
+										<i class="fa fa-angle-double-right"></i>
+										模型
+									</a>
+								</li>
+								<li>
+									<a href="<?php echo U('Dev/Form/index',array('sit_id'=>$_COOKIE['_sit_id']));?>">
+										<i class="fa fa-angle-double-right"></i>
+										表单
+									</a>
+								</li>
+								<li>
+									<a href="<?php echo U('Dev/Block/index');?>">
+										<i class="fa fa-angle-double-right"></i>
+										区块
+									</a>
+								</li>
+								<li>
+									<a href="<?php echo U('Dev/Event/index');?>">
+										<i class="fa fa-angle-double-right"></i>
+										事件
+									</a>
+								</li>
+							</ul>
 						</li>
 					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="wrap">
-			<div class="container">
-				<!--侧栏-->
-				<div class="side_bar">
-<div class="nav_menu" id="" name="userMenu">
-<h3>一级菜单</h3>
-<ul>
-<li class="item item_unfold">
-<a class="item_link" href="javascript::void(0)">二级菜单</a>
-<ul class="sub_menu">
-<li class="sub_item">
-<a href="<?php echo site_url('goods/index');?>" class="sub_item_link" id="publishProduct">SKU列表</a>
-</li>
-<li class="sub_item">
-<a href="<?php echo site_url('goods/edit');?>" class="sub_item_link" id="">添加SKU</a>
-</li>
-</ul>
-</li>
-</ul>
-<h3>一级菜单</h3>
-<ul>
-<li class="item item_unfold">
-<a class="item_link" href="javascript::void(0)">二级菜单</a>
-<ul class="sub_menu">
-<li class="sub_item">
-<a href="" class="sub_item_link" id="publishProduct">三级菜单</a>
-</li>
-<li class="sub_item">
-<a href="" class="sub_item_link" id="">三级菜单</a>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-				<div class="content">
+				</section>
+			</aside>
+			<aside class="right-side">
+				<section class="content-header">
+					<h1>首页
+						<small>xxx</small></h1>
+					<ol class="breadcrumb">
+						<li>
+							<a href="#">
+								<i class="fa fa-dashboard"></i>
+								Home
+							</a>
+						</li>
+						<li class="active">Test</li>
+					</ol>
+				</section>
+				<section class="content">
 					
-				</div>
-			</div>
-		</div>
-		<div class="footer">
-			<div class="container copyrights">© 1998 - <span id="">2013</span> 版权所有</div>
+				</section>
+			</aside>
 		</div>
 		
-
+		<?php echo $_regionClosure;?>
+		
 	</body>
 </html>
