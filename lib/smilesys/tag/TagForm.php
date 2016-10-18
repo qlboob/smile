@@ -243,7 +243,7 @@ class TagForm extends BaseTag {
 			$ret .= '<?php foreach('.$optionV.' as $key=>$val){?>';
         	if(!empty($selected)) {
         		//0=='' 所以要区分一 下这个情况
-                $ret   .= '<?php if(isset($'.$selected.')&&($'.$selected.'==$key&&$key!==0&&\'\'!==$'.$selected.'||(is_array($'.$selected.')&&in_array($key,$'.$selected.')))){?>';
+                $ret   .= '<?php if(isset($'.$selected.')&&($'.$selected.'==$key&&($key!==0||\'\'!==$'.$selected.')||(is_array($'.$selected.')&&in_array($key,$'.$selected.')))){?>';
                 $ret   .= "<option selected=\"selected\" value=\"<?php echo $keyFun(\$key); ?>\"><?php echo $valueFun(\$val);?></option>";
                 $ret   .= "<?php }else{?><option value=\"<?php echo $keyFun(\$key);?>\"><?php echo $valueFun(\$val);?></option>";
                 $ret   .= '<?php }?>';
