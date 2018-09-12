@@ -4,6 +4,7 @@
 * php -f __FILE__ {被编译的目录} {输出目录} [{被编译的文件}] [{输出文件的扩展名}]
  */
 error_reporting(E_ALL & ~E_NOTICE);
+//error_reporting(0);
 $pwd = dirname ( __FILE__ );
 require "$pwd/../lib/index.php";
 require "$pwd/../lib/smilesys/function/writeFile.function.php";
