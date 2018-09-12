@@ -110,12 +110,14 @@ class SmileTemplate {
 		
 		//restore block
 		for ($i=0;FALSE !== stripos($compiledContent,'<!--###block ') && $i<3;++$i) {
-			$compiledContent	=	preg_replace('/<!--###block (\w*?) smile###-->/eis',"\$this->blockto('\\1')",$compiledContent);
+			//$compiledContent	=	preg_replace('/<!--###block (\w*?) smile###-->/eis',"\$this->blockto('\\1')",$compiledContent);
+			$compiledContent	=	preg_replace_callback('/<!--###block (\w*?) smile###-->/is',array(&$this,'blockto'),$compiledContent);
 		}
 		
 		//restore no html cache
 		while ($this->noHtmlCache)
-		$compiledContent = preg_replace('/<!--###nohtmlcache(\d+?)smile###-->/eis',"\$this->_reNoHtmlCache('\\1')",$compiledContent);
+		//$compiledContent = preg_replace('/<!--###nohtmlcache(\d+?)smile###-->/eis',"\$this->_reNoHtmlCache('\\1')",$compiledContent);
+		$compiledContent = preg_replace_callback('/<!--###nohtmlcache(\d+?)smile###-->/is',array(&$this,'_reNoHtmlCache'),$compiledContent);
 		
 		//delete repeat function
 		$this->delRepeatFun($compiledContent);
@@ -169,7 +171,7 @@ class SmileTemplate {
 		$end	=	$this->config['tagEnd'];
 		//compile literal
 //		$content	=	preg_replace("/{$begin}literal{$end}(.*?){$begin}\/literal{$end}/eis","\$this->_literal('\\1')",$tplContent);
-		$content	=	preg_replace_callback("/{$begin}literal{$end}(.*?){$begin}\/literal{$end}/is",array($this,'_literal'),$tplContent);
+		$content	=	preg_replace_callback("/{$begin}literal{$end}(.*?){$begin}\/literal{$end}/is",array(&$this,'_literal'),$tplContent);
 		if ($this->config['replace']) {
 			$content	=	str_replace(array_keys($this->config['replace']),array_values($this->config['replace']),$content);
 		}
@@ -195,13 +197,17 @@ class SmileTemplate {
 //		Luke 2010-07-24 except {\d|\s}
 //		$content	=	preg_replace("/$varBegin(?!\s|\d)([^\s{$varBegin}{$varEnd}]+?)(?!\s|;)$varEnd/eis","\$this->_other('\\1')",$content);
 		// fix by Luke 2010-08-23 , if there is space in {}. and don't match mutiple lines.
-		$content	=	preg_replace("/{$varBegin}([\\\$:~@#\.\^\*\/].+?)(?!\s|;)$varEnd/eis",
-										"\$this->_other('\\1')",$content);
+		//$content	=	preg_replace("/{$varBegin}([\\\$:~@#\.\^\*\/].+?)(?!\s|;)$varEnd/eis",
+										//"\$this->_other('\\1')",$content);
+		$content	=	preg_replace_callback("/{$varBegin}([\\\$:~@#\.\^\*\/].+?)(?!\s|;)$varEnd/is",
+										array(&$this,'_other'),$content);
 
 		//restore Literal<!--###htmlcache{$i}smile###-->
-		$content = preg_replace('/<!--###literal(\d+?)smile###-->/eis',"\$this->_reLiteral('\\1')",$content);
+		//$content = preg_replace('/<!--###literal(\d+?)smile###-->/eis',"\$this->_reLiteral('\\1')",$content);
+		$content = preg_replace_callback('/<!--###literal(\d+?)smile###-->/is',array(&$this,'_reLiteral'),$content);
 		//restore html cache
-		$content = preg_replace('/<!--###htmlcache(\d+?)smile###-->/eis',"\$this->_reHtmlCache('\\1')",$content);
+		//$content = preg_replace('/<!--###htmlcache(\d+?)smile###-->/eis',"\$this->_reHtmlCache('\\1')",$content);
+		$content = preg_replace_callback('/<!--###htmlcache(\d+?)smile###-->/is',array(&$this,'_reHtmlCache'),$content);
 		
 		
 		//load depended function
@@ -249,6 +255,9 @@ class SmileTemplate {
 	 * @param integer $tag
 	 */
 	function _reLiteral($tag) {
+		if ( is_array($tag) ) {
+			$tag=$tag[1];
+		}
         $parseStr   =  $this->literal[$tag];
         unset($this->literal[$tag]);
         return $parseStr;
@@ -287,6 +296,7 @@ class SmileTemplate {
 		
 		$begin	=	$this->config['tagBegin'];
 		$end	=	$this->config['tagEnd'];
+		$that=$this;
 		foreach ($tagClass->getTag() as $key => $v) {
 			isset($v['name'])	||	$v['name']=$key;
 			if ($hide) {
@@ -299,24 +309,44 @@ class SmileTemplate {
 				if (isset($v['nested']) || isset($v['content'])) { // there is some content
 					for ($i=0;$i<$level;++$i){
 						if (isset($v['attr'])) {
-							$content	=	preg_replace("|{$begin}{$sTag}\s+?(.*?)\s*?(?!/){$end}(.*?){$begin}/{$sTag}{$end}|eis",
-															"\$this->_tag(\$tagClass,'{$v['name']}','\\1','\\2')",
+							//$content	=	preg_replace("|{$begin}{$sTag}\s+?(.*?)\s*?(?!/){$end}(.*?){$begin}/{$sTag}{$end}|eis",
+															//"\$this->_tag(\$tagClass,'{$v['name']}','\\1','\\2')",
+															//$content);
+							$content	=	preg_replace_callback("|{$begin}{$sTag}\s+?(.*?)\s*?(?!/){$end}(.*?){$begin}/{$sTag}{$end}|is",
+															function($matches) use ($that,$tagClass,$v){
+																return $that->_tag($tagClass,$v['name'],$matches[1],$matches[2]);
+															},
 															$content);
 						}else {
-							$content	=	preg_replace("|{$begin}{$sTag}{$end}(.*?){$begin}/{$sTag}{$end}|eis",
-															"\$this->_tag(\$tagClass,'{$v['name']}','','\\1')",
+							//$content	=	preg_replace("|{$begin}{$sTag}{$end}(.*?){$begin}/{$sTag}{$end}|eis",
+															//"\$this->_tag(\$tagClass,'{$v['name']}','','\\1')",
+															//$content);
+							$content	=	preg_replace_callback("|{$begin}{$sTag}{$end}(.*?){$begin}/{$sTag}{$end}|is",
+															function($matches) use($that,$tagClass,$v){
+																return $that->_tag($tagClass,$v['name'],'',$matches[1]);
+															},
 															$content);
 						}
 						
 					}
 				}else { //there is no content
 					if (isset($v['attr'])) {
-						$content	=	preg_replace("|{$begin}{$sTag}\s+?(.*?)\s*?/{$end}|eis",
-														"\$this->_tag(\$tagClass,'{$v['name']}','\\1','')",
+						//$content	=	preg_replace("|{$begin}{$sTag}\s+?(.*?)\s*?/{$end}|eis",
+														//"\$this->_tag(\$tagClass,'{$v['name']}','\\1','')",
+														//$content);
+						$content	=	preg_replace_callback("|{$begin}{$sTag}\s+?(.*?)\s*?/{$end}|is",
+														function($matches) use($that,$tagClass,$v){
+															return $that->_tag($tagClass,$v['name'],$matches[1],'');
+														},
 														$content);
 					}else {
-						$content	=	preg_replace("|{$begin}{$sTag}\s+?/{$end}|eis",
-														"\$this->_tag(\$tagClass,'{$v['name']}','\\1','')",
+						//$content	=	preg_replace("|{$begin}{$sTag}\s+?/{$end}|eis",
+														//"\$this->_tag(\$tagClass,'{$v['name']}','\\1','')",
+														//$content);
+						$content	=	preg_replace_callback("|{$begin}{$sTag}\s+?/{$end}|is",
+														function($matches) use ($that,$tagClass,$v){
+															return $that->_tag($tagClass,$v['name'],$matches[1],'');
+														},
 														$content);
 					}
 				}
@@ -345,6 +375,9 @@ class SmileTemplate {
 	 * @param string $tagStr
 	 */
 	function _other($tagStr){
+		if ( is_array($tagStr) ) {
+			$tagStr=$tagStr[1];
+		}
 		stripPreg($tagStr);
         //not compile the non-template tag
         if(preg_match('/^[\s|\d]/is',$tagStr))
@@ -624,6 +657,9 @@ class SmileTemplate {
      * @return string
      */
     function _reHtmlCache($tag) {
+		if ( is_array($tag) ) {
+			$tag=$tag[1];
+		}
     	$parseStr   =  $this->htmlCache[$tag];
         unset($this->htmlCache[$tag]);
         return $parseStr;
@@ -655,6 +691,9 @@ class SmileTemplate {
 	 * @return string:
 	 */
 	function _reNoHtmlCache($tag) {
+		if ( is_array($tag) ) {
+			$tag=$tag[1];
+		}
     	$parseStr   =  $this->noHtmlCache[$tag];
         unset($this->noHtmlCache[$tag]);
         return $parseStr;
@@ -806,6 +845,9 @@ class SmileTemplate {
      * @return string
      */
     function blockto($name) {
+		if ( is_array($name) ) {
+			$name=$name[1];
+		}
     	stripPreg($name);
     	$blocks		=	$this->block[$name];
     	if (!is_array($blocks)) {
